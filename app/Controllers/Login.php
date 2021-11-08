@@ -23,6 +23,7 @@ class Login extends ResourceController
 
     public function login()
     {
+        // validasi kolom input
         if (!$this->validate([
             'username' => [
                 'rules' => 'required',
@@ -45,14 +46,17 @@ class Login extends ResourceController
             $pass = $this->request->getPost('password');
             $data = $rest->login($username, $pass);
             $id = $data->data->id_mahasiswa;
-            $result = $rest->check("biodata", "GET", "param=id_mahasiswa&value='$id'");
-            $this->session->set((array)$result->data[0]);
-            if ($data->data->role == "Mahasiswa") {
-                return redirect()->to(base_url('mahasiswa/home'));
+            if ($id) {
+                $result = $rest->check("biodata", "GET", "param=id_mahasiswa&value='$id'");
+                $this->session->set((array)$result->data[0]);
+                if ($data->data->role == "Mahasiswa") {
+                    return redirect()->to(base_url('mahasiswa/home'));
+                } else {
+                    return redirect()->to(base_url('admin/home'));
+                }
             } else {
-                return redirect()->to(base_url('admin/home'));
+                echo "data gagal";
             }
-            return $this->respond($data);
         }
     }
 }
