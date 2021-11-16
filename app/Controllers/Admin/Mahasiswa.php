@@ -2,36 +2,46 @@
 
 namespace App\Controllers\Admin;
 
-use App\Controllers\BaseController;
 use App\Libraries\Rest;
 use CodeIgniter\RESTful\ResourceController;
-use App\Models\RoleModel;
 
 class Mahasiswa extends ResourceController
 {
+
+    protected $modelName = "App\Models\MahasiswaModel";
+    protected $format = "json";
     protected $rest;
-    protected $RoleModel;
     public function __construct()
     {
         $this->rest = new Rest();
-        $this->RoleModel = new RoleModel();
     }
     public function index()
     {
-        $mahasiswaAktif = $this->rest->callRest('mahasiswalab');
+        $mahasiswa = $this->model->findAll();
         $data = [
-            'title' => 'Admin || Laboratorium',
-            'mahasiswaAktif' => $mahasiswaAktif
+            "title" => 'Mahasiswa || Laboratorium',
+            "mahasiswa" => $mahasiswa
         ];
-
-        return view('halaman/admin', $data);
+        return view("halaman/mahasiswa", $data);
     }
 
-    public function insert()
+    public function sync()
     {
+        $cek = $this->model->findAll();
+        if (count($cek) == 0) {
+            $mahasiswaAktif = $this->rest->callRest('mahasiswa');
+            $result = $this->model->insertBatch($mahasiswaAktif);
+            return $this->respond($result);
+        }
     }
 
-    public function read()
+    public function detail($nim)
     {
+        $mahasiswa = $this->model->where(['nim' => $nim])->first();
+        $data = [
+            'title' => 'Detail',
+            'mahasiswa' => $mahasiswa
+        ];
+        return view('halaman/mahasiswa', $data);
     }
 }

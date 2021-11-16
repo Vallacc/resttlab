@@ -35,8 +35,7 @@ $routes->get('/', 'login::index');
 $routes->get('/admin', 'Admin\admin::index');
 $routes->get('/mahasiswa', 'Admin\mahasiswa::index');
 $routes->get('/jurusan', 'Admin\jurusan::index');
-$routes->get('/save', 'Admin\mahasiswa::insert');
-$routes->get('/read', 'Admin\mahasiswa::read');
+$routes->get('/mahasiswa/(:segment)', 'Admin\mahasiswa::detail/$1');
 
 /*
  * --------------------------------------------------------------------
